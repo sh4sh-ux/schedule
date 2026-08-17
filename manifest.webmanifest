@@ -1,0 +1,11 @@
+{
+  "name": "일정",
+  "short_name": "일정",
+  "description": "캘린더 · 할 일 · 습관 올인원 일정 관리",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#0a84ff",
+  "orientation": "portrait",
+  "icons": []
+}
