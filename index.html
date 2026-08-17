@@ -19,12 +19,18 @@
     --safe-b:env(safe-area-inset-bottom,0px);
   }
   @media (prefers-color-scheme: dark){
-    :root{
+    :root:not([data-theme="light"]){
       --bg:#000; --card:#1c1c1e; --card2:#2c2c2e;
       --text:#fff; --sub:#98989f; --line:#38383a; --line2:#2a2a2c;
       --tint-soft:#0d2a4a; --sat:#5a9bff; --sun:#ff6961;
       --shadow:0 1px 3px rgba(0,0,0,.4);
     }
+  }
+  :root[data-theme="dark"]{
+    --bg:#000; --card:#1c1c1e; --card2:#2c2c2e;
+    --text:#fff; --sub:#98989f; --line:#38383a; --line2:#2a2a2c;
+    --tint-soft:#0d2a4a; --sat:#5a9bff; --sun:#ff6961;
+    --shadow:0 1px 3px rgba(0,0,0,.4);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;}
@@ -202,8 +208,9 @@
   <div class="hd" id="hd">
     <div><div class="y" id="hy">2026</div><h1 id="htitle">8월 <small id="hsub"></small></h1></div>
     <div class="acts">
+      <button class="icobtn" id="btnTheme" title="테마 전환">🌗</button>
       <button class="icobtn" id="btnSearch">🔍</button>
-      <button class="icobtn" id="btnToday">◎</button>
+      <button class="icobtn" id="btnToday" title="오늘로 이동">◎</button>
     </div>
   </div>
 
@@ -766,6 +773,22 @@ function rerenderAll(){
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>switchPage(t.dataset.p));
 document.querySelectorAll('#calseg button').forEach(b=>b.onclick=()=>{calView=b.dataset.v;document.querySelectorAll('#calseg button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.calview').forEach(v=>v.classList.remove('on'));document.getElementById('cv-'+calView).classList.add('on');renderCalendar();});
 document.getElementById('btnToday').onclick=()=>{viewDate=new Date();selDate=todayStr();renderCalendar();};
+/* 테마: 자동(시스템) → 라이트 → 다크 순환 */
+const THEME_ORDER=['auto','light','dark'],THEME_ICON={auto:'🌗',light:'☀️',dark:'🌙'},THEME_NAME={auto:'시스템 자동',light:'라이트 모드',dark:'다크 모드'};
+let theme=localStorage.getItem('schedule_theme')||'auto';
+function applyTheme(t,announce){
+  const root=document.documentElement;
+  if(t==='light')root.setAttribute('data-theme','light');
+  else if(t==='dark')root.setAttribute('data-theme','dark');
+  else root.removeAttribute('data-theme');
+  localStorage.setItem('schedule_theme',t);
+  const btn=document.getElementById('btnTheme');if(btn)btn.textContent=THEME_ICON[t];
+  const isDark=t==='dark'||(t==='auto'&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',isDark?'#000000':'#0a84ff');
+  if(announce)toast(THEME_NAME[t]);
+}
+document.getElementById('btnTheme').onclick=()=>{theme=THEME_ORDER[(THEME_ORDER.indexOf(theme)+1)%3];applyTheme(theme,true);};
+applyTheme(theme);
 document.getElementById('btnSearch').onclick=()=>{const q=prompt('일정 검색');if(!q)return;const hits=store.events.filter(e=>(e.title+' '+(e.location||'')+' '+(e.memo||'')).toLowerCase().includes(q.toLowerCase()));if(!hits.length){toast('검색 결과가 없어요');return;}calView='agenda';document.querySelectorAll('#calseg button').forEach(x=>x.classList.toggle('on',x.dataset.v==='agenda'));document.querySelectorAll('.calview').forEach(v=>v.classList.remove('on'));document.getElementById('cv-agenda').classList.add('on');const box=document.getElementById('agenda');box.innerHTML='<div class="ag-day">🔍 "'+esc(q)+'" 검색 결과 '+hits.length+'건</div><div class="card" style="margin:0 4px">'+hits.map(e=>evRowHTML(e,!!e.endDate)).join('')+'</div>';box.querySelectorAll('[data-eid]').forEach(el=>el.onclick=()=>openDetail(el.dataset.eid));};
 document.getElementById('fab').onclick=()=>{if(curPage==='todo')openTodoForm();else if(curPage==='habit')openHabitForm();else openEvent();};
 
