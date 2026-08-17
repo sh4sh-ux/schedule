@@ -41,11 +41,14 @@
 
   /* header */
   .hd{padding:14px 18px 4px;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;}
-  .hd .y{font-size:13px;color:var(--sub);font-weight:700;}
-  .hd h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:baseline;gap:7px;}
-  .hd h1 small{font-size:14px;color:var(--sub);font-weight:600;}
-  .hd .acts{display:flex;gap:8px;}
-  .icobtn{width:38px;height:38px;border:none;border-radius:12px;background:var(--card);box-shadow:var(--shadow);font-size:16px;color:var(--tint);cursor:pointer;display:grid;place-items:center;}
+  .hd .acts{display:flex;gap:6px;}
+  .icobtn{height:36px;min-width:36px;padding:0 11px;border:none;border-radius:11px;background:var(--card);box-shadow:var(--shadow);font-size:15px;font-weight:700;color:var(--tint);cursor:pointer;display:grid;place-items:center;}
+  .navgrp{display:flex;align-items:center;gap:2px;}
+  .navbtn{width:32px;height:38px;border:none;background:none;font-size:26px;line-height:1;color:var(--text);cursor:pointer;opacity:.65;}
+  .navbtn:hover{opacity:1;}
+  .mtitle{border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;padding:0 4px;color:var(--text);}
+  .mtitle span{font-size:22px;font-weight:800;letter-spacing:-.3px;}
+  .mtitle small{font-size:11px;color:var(--sub);font-weight:600;margin-top:-2px;}
 
   .seg{display:flex;background:var(--card2);border-radius:12px;padding:3px;margin:10px 18px 4px;}
   .seg button{flex:1;border:none;background:none;padding:8px 0;font-size:14px;font-weight:700;color:var(--sub);border-radius:9px;cursor:pointer;transition:.15s;}
@@ -75,12 +78,17 @@
   .more{font-size:9px;color:var(--sub);font-weight:700;padding-left:3px;margin-top:1px;}
 
   /* day sheet under month */
-  .sheet{margin:12px 8px 0;}
-  .sheet .sd{display:flex;align-items:center;gap:8px;padding:0 6px 8px;flex-wrap:wrap;}
-  .sheet .sd b{font-size:17px;font-weight:800;}
-  .sheet .sd .lu{font-size:12px;color:var(--sub);font-weight:600;}
-  .sheet .sd .hol{font-size:12px;font-weight:800;color:var(--sun);}
-  .sheet .sd .dday{margin-left:auto;font-size:12px;font-weight:800;color:var(--tint);background:var(--tint-soft);padding:3px 9px;border-radius:20px;}
+  #cv-month{padding-bottom:96px;}
+  .daysheet{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(74px + var(--safe-b));width:100%;max-width:480px;background:var(--card);border-radius:22px 22px 0 0;box-shadow:0 -6px 28px rgba(0,0,0,.16);z-index:40;transition:transform .34s cubic-bezier(.2,.9,.3,1);display:flex;flex-direction:column;max-height:56vh;}
+  .daysheet.collapsed{transform:translateX(-50%) translateY(calc(100% - 66px));}
+  .sheet-handle{padding:10px 0 6px;cursor:pointer;flex:none;}
+  .sheet-handle .grab{width:38px;height:5px;border-radius:3px;background:var(--line);margin:0 auto;}
+  #sheetInner{overflow-y:auto;padding:0 14px 16px;}
+  .sd{display:flex;align-items:center;gap:8px;padding:0 4px 10px;flex-wrap:wrap;}
+  .sd b{font-size:17px;font-weight:800;}
+  .sd .lu{font-size:12px;color:var(--sub);font-weight:600;}
+  .sd .hol{font-size:12px;font-weight:800;color:var(--sun);}
+  .sd .dday{margin-left:auto;font-size:12px;font-weight:800;color:var(--tint);background:var(--tint-soft);padding:3px 9px;border-radius:20px;}
 
   .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
   .ev{display:flex;gap:11px;padding:12px 14px;align-items:flex-start;border-bottom:1px solid var(--line);cursor:pointer;}
@@ -197,17 +205,46 @@
   .dt-row .v{font-weight:600;} .dt-row .v small{color:var(--sub);font-weight:500;}
   .toast{position:fixed;bottom:calc(120px + var(--safe-b));left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:11px 18px;border-radius:24px;font-size:14px;font-weight:700;z-index:200;opacity:0;transition:.25s;pointer-events:none;}
   .toast.on{opacity:1;}
+
+  /* ===== 데스크탑: 브라우저 창 꽉 채우는 네이버 PC 스타일 월 뷰 ===== */
+  @media (min-width:900px){
+    .app{max-width:100%;padding-bottom:0;}
+    .hd{padding:18px 32px 8px;}
+    .mtitle span{font-size:26px;}
+    .seg{max-width:300px;margin:10px 32px 8px;}
+    .calview{padding:0 24px 16px;}
+    #cv-month{padding-bottom:92px;}
+    .dow{padding:8px 0 8px;} .dow span{font-size:13px;}
+    .mgrid{border-top:1px solid var(--line);border-left:1px solid var(--line);border-radius:10px;overflow:hidden;}
+    .day{min-height:max(112px,calc((100vh - 260px)/6));border-right:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;padding:7px 9px;}
+    .day.selday{background:var(--tint-soft);}
+    .dnum{justify-content:flex-start;}
+    .dnum .s{font-size:15px;}
+    .day.today .s{min-width:25px;height:25px;}
+    .lun{position:absolute;top:8px;right:10px;text-align:right;font-size:11px;margin:0;}
+    .evs{margin-top:6px;gap:3px;}
+    .evbar{font-size:12px;padding:2px 8px;border-radius:5px;line-height:1.5;}
+    .more{font-size:11.5px;padding-left:4px;}
+    .daysheet{display:none;}
+    #pg-today,#pg-todo,#pg-habit{max-width:760px;margin:0 auto;}
+    .fab{right:34px;bottom:100px;width:60px;height:60px;font-size:30px;}
+    .tabbar{max-width:340px;border-radius:20px;bottom:16px;border:1px solid var(--line);box-shadow:var(--shadow);}
+  }
 </style>
 </head>
 <body>
 <div class="app">
   <!-- header -->
   <div class="hd" id="hd">
-    <div><div class="y" id="hy">2026</div><h1 id="htitle">8월 <small id="hsub"></small></h1></div>
+    <div class="navgrp">
+      <button class="navbtn" id="btnPrev" title="이전 달">‹</button>
+      <button class="mtitle" id="btnTitle"><span id="htitle">2026. 8.</span><small id="hsub">음력 7월</small></button>
+      <button class="navbtn" id="btnNext" title="다음 달">›</button>
+    </div>
     <div class="acts">
-      <button class="icobtn" id="btnTheme" title="테마 전환">🌗</button>
+      <button class="icobtn" id="btnToday" title="오늘로 이동">오늘</button>
       <button class="icobtn" id="btnSearch">🔍</button>
-      <button class="icobtn" id="btnToday" title="오늘로 이동">◎</button>
+      <button class="icobtn" id="btnTheme" title="테마 전환">🌗</button>
     </div>
   </div>
 
@@ -222,7 +259,10 @@
     <div class="calview on" id="cv-month">
       <div class="dow"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
       <div class="mgrid" id="mgrid"></div>
-      <div class="sheet" id="daySheet"></div>
+      <div class="daysheet" id="daySheet">
+        <div class="sheet-handle" id="sheetHandle"><div class="grab"></div></div>
+        <div id="sheetInner"></div>
+      </div>
     </div>
     <div class="calview" id="cv-week">
       <div class="wk-head" id="wkHead"></div>
@@ -408,7 +448,7 @@ function renderMonth(){
     const wrap=document.createElement('div');wrap.className='evs';
     if(hol){const h=document.createElement('div');h.className='evbar hol';h.textContent=hol;wrap.appendChild(h);}
     const evs=eventsOnDate(ds);
-    const room=hol?2:3;
+    const room=(window.innerWidth>=900)?(hol?11:12):(hol?2:3);
     evs.slice(0,room).forEach(o=>{
       const b=document.createElement('div');b.className='evbar';b.style.background=catColor(o.e.cat);
       if(o.span>1)b.innerHTML=(o.idx===0||dow===0)?esc(o.e.title):'&nbsp;';
@@ -417,13 +457,13 @@ function renderMonth(){
     });
     if(evs.length>room){const mo=document.createElement('div');mo.className='more';mo.textContent='+'+(evs.length-room);wrap.appendChild(mo);}
     el.appendChild(wrap);
-    el.onclick=()=>{selDate=ds;if(c.mut){viewDate=new Date(c.y,c.m,1);}renderCalendar();};
+    el.onclick=()=>{selDate=ds;if(c.mut){viewDate=new Date(c.y,c.m,1);}renderCalendar();setSheet(false);};
     g.appendChild(el);
   });
   renderDaySheet();
 }
 function renderDaySheet(){
-  const box=document.getElementById('daySheet');
+  const box=document.getElementById('sheetInner');
   const dt=parseYMD(selDate);
   const l=solar2lunar(dt.getFullYear(),dt.getMonth()+1,dt.getDate());
   const hol=holidayName(dt.getFullYear(),dt.getMonth()+1,dt.getDate());
@@ -520,9 +560,9 @@ function renderAgenda(){
 
 function renderCalendar(){
   const y=viewDate.getFullYear(),m=viewDate.getMonth()+1;
-  document.getElementById('hy').textContent=y;
   const lref=solar2lunar(y,m,15);
-  document.getElementById('htitle').innerHTML=m+'월 <small id="hsub">음력 '+lref.m+'월</small>';
+  document.getElementById('htitle').textContent=y+'. '+m+'.';
+  document.getElementById('hsub').textContent='음력 '+lref.m+'월';
   if(calView==='month')renderMonth();
   else if(calView==='week')renderWeek();
   else renderAgenda();
@@ -768,6 +808,20 @@ function rerenderAll(){
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>switchPage(t.dataset.p));
 document.querySelectorAll('#calseg button').forEach(b=>b.onclick=()=>{calView=b.dataset.v;document.querySelectorAll('#calseg button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.calview').forEach(v=>v.classList.remove('on'));document.getElementById('cv-'+calView).classList.add('on');renderCalendar();});
 document.getElementById('btnToday').onclick=()=>{viewDate=new Date();selDate=todayStr();renderCalendar();};
+document.getElementById('btnPrev').onclick=()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()-1,1);renderCalendar();};
+document.getElementById('btnNext').onclick=()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,1);renderCalendar();};
+document.getElementById('btnTitle').onclick=()=>{viewDate=new Date();selDate=todayStr();renderCalendar();};
+/* 하단 시트 접기/펴기 */
+function setSheet(collapsed){document.getElementById('daySheet').classList.toggle('collapsed',collapsed);}
+function toggleSheet(){document.getElementById('daySheet').classList.toggle('collapsed');}
+document.getElementById('sheetHandle').onclick=toggleSheet;
+/* 창 크기 변화 시 월 뷰 재렌더 (모바일↔데스크탑 이벤트 개수 조정) */
+let rzT;window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(curPage==='cal'&&calView==='month')renderMonth();},180);});
+/* 시트 위로/아래로 드래그 스냅 */
+(function(){const h=document.getElementById('sheetHandle');let sy=0,drag=false,wasCol=false;
+  h.addEventListener('pointerdown',e=>{drag=true;sy=e.clientY;wasCol=document.getElementById('daySheet').classList.contains('collapsed');h.setPointerCapture&&h.setPointerCapture(e.pointerId);});
+  window.addEventListener('pointerup',e=>{if(!drag)return;drag=false;const dy=e.clientY-sy;if(Math.abs(dy)<24)return;setSheet(dy>0);});
+})();
 /* 테마: 자동(시스템) → 라이트 → 다크 순환 */
 const THEME_ORDER=['auto','light','dark'],THEME_ICON={auto:'🌗',light:'☀️',dark:'🌙'},THEME_NAME={auto:'시스템 자동',light:'라이트 모드',dark:'다크 모드'};
 let theme=localStorage.getItem('schedule_theme')||'auto';
