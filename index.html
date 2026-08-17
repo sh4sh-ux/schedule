@@ -59,23 +59,20 @@
   .dow{display:grid;grid-template-columns:repeat(7,1fr);padding:2px 4px 4px;}
   .dow span{text-align:center;font-size:11px;font-weight:800;color:var(--sub);}
   .dow span:first-child{color:var(--sun);} .dow span:last-child{color:var(--sat);}
-  .mgrid{display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid var(--line2);}
-  .day{min-height:82px;border-bottom:1px solid var(--line2);border-right:1px solid var(--line2);padding:4px 3px 2px;position:relative;cursor:pointer;overflow:hidden;}
-  .day:nth-child(7n){border-right:none;}
-  .day.selday{background:var(--tint-soft);}
-  .dnum{display:flex;align-items:baseline;gap:3px;justify-content:center;}
-  .dnum .s{font-size:13px;font-weight:700;}
-  .dnum .l{font-size:9px;color:var(--sub);font-weight:600;}
+  .mgrid{display:grid;grid-template-columns:repeat(7,1fr);}
+  .day{min-height:84px;padding:5px 3px 3px;position:relative;cursor:pointer;overflow:hidden;border-radius:10px;}
+  .day.selday{background:var(--card2);}
+  .dnum{display:flex;justify-content:center;}
+  .dnum .s{font-size:14px;font-weight:600;line-height:1.2;}
+  .lun{text-align:center;font-size:8.5px;color:var(--sub);font-weight:600;line-height:1;margin-top:1px;letter-spacing:-.3px;}
   .day.sun .s{color:var(--sun);} .day.sat .s{color:var(--sat);}
-  .day.hol .s{color:var(--sun);} .day.hol .l{color:var(--sun);opacity:.8;}
-  .day.mut{opacity:.32;}
-  .day.today .s{background:var(--tint);color:#fff;border-radius:50%;min-width:21px;height:21px;padding:0 3px;display:inline-grid;place-items:center;font-weight:800;}
-  .evs{margin-top:3px;display:flex;flex-direction:column;gap:2px;}
-  .evbar{font-size:9.5px;font-weight:700;color:#fff;padding:1px 4px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.55;}
-  .evdot{font-size:9.5px;font-weight:650;color:var(--text);padding:0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:3px;}
-  .evdot::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--c,var(--tint));flex:none;}
-  .evdot.hol{color:var(--sun);font-weight:800;} .evdot.hol::before{display:none;}
-  .more{font-size:9px;color:var(--sub);font-weight:700;padding-left:2px;}
+  .day.hol .s{color:var(--sun);}
+  .day.mut{opacity:.3;}
+  .day.today .s{background:var(--text);color:var(--bg);border-radius:50%;min-width:23px;height:23px;padding:0 4px;display:inline-grid;place-items:center;font-weight:800;}
+  .evs{margin-top:4px;display:flex;flex-direction:column;gap:2px;}
+  .evbar{font-size:9.5px;font-weight:600;color:#fff;padding:1.5px 5px;border-radius:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.5;}
+  .evbar.hol{background:color-mix(in srgb,var(--sun) 24%,transparent)!important;color:var(--sun);font-weight:700;}
+  .more{font-size:9px;color:var(--sub);font-weight:700;padding-left:3px;margin-top:1px;}
 
   /* day sheet under month */
   .sheet{margin:12px 8px 0;}
@@ -406,22 +403,18 @@ function renderMonth(){
     const hol=holidayName(c.y,c.m+1,c.d);
     if(hol)el.classList.add('hol');
     const l=solar2lunar(c.y,c.m+1,c.d);
-    const luTxt=(l.d===1)?(l.m+'.1'):(''+l.d);
-    el.innerHTML='<div class="dnum"><span class="s">'+c.d+'</span><span class="l">'+luTxt+'</span></div>';
+    const luTxt=(l.d===1||l.d===15)?(l.m+'.'+l.d):'';   // 네이버식: 초하루·보름만 표기
+    el.innerHTML='<div class="dnum"><span class="s">'+c.d+'</span></div>'+(luTxt?'<div class="lun">'+luTxt+'</div>':'');
     const wrap=document.createElement('div');wrap.className='evs';
-    if(hol){const h=document.createElement('div');h.className='evdot hol';h.textContent=hol;wrap.appendChild(h);}
+    if(hol){const h=document.createElement('div');h.className='evbar hol';h.textContent=hol;wrap.appendChild(h);}
     const evs=eventsOnDate(ds);
     const room=hol?2:3;
     evs.slice(0,room).forEach(o=>{
-      if(o.span>1){
-        const b=document.createElement('div');b.className='evbar';b.style.background=catColor(o.e.cat);
-        b.innerHTML=(o.idx===0||dow===0)?esc(o.e.title):'&nbsp;';wrap.appendChild(b);
-      }else{
-        const e=document.createElement('div');e.className='evdot';e.style.setProperty('--c',catColor(o.e.cat));
-        e.textContent=(o.e.allDay?'':(o.e.start?o.e.start+' ':''))+o.e.title;wrap.appendChild(e);
-      }
+      const b=document.createElement('div');b.className='evbar';b.style.background=catColor(o.e.cat);
+      if(o.span>1)b.innerHTML=(o.idx===0||dow===0)?esc(o.e.title):'&nbsp;';
+      else b.textContent=(o.e.allDay?'':(o.e.start?o.e.start+' ':''))+o.e.title;
+      wrap.appendChild(b);
     });
-    const extra=evs.length-room+(hol?0:0);
     if(evs.length>room){const mo=document.createElement('div');mo.className='more';mo.textContent='+'+(evs.length-room);wrap.appendChild(mo);}
     el.appendChild(wrap);
     el.onclick=()=>{selDate=ds;if(c.mut){viewDate=new Date(c.y,c.m,1);}renderCalendar();};
@@ -435,7 +428,9 @@ function renderDaySheet(){
   const l=solar2lunar(dt.getFullYear(),dt.getMonth()+1,dt.getDate());
   const hol=holidayName(dt.getFullYear(),dt.getMonth()+1,dt.getDate());
   const dday=selDate===todayStr()?'오늘':(diffDays(todayStr(),selDate)>0?'D-'+diffDays(todayStr(),selDate):'D+'+(-diffDays(todayStr(),selDate)));
-  let h='<div class="sd"><b>'+fmtKDate(selDate)+'</b><span class="lu">음력 '+(l.leap?'윤':'')+l.m+'.'+l.d+'</span>'+(hol?'<span class="hol">'+hol+'</span>':'')+'<span class="dday">'+dday+'</span></div>';
+  const dtn=(dt.getMonth()+1)+'. '+dt.getDate()+'. '+DOWK[dt.getDay()];
+  const lun='음력 '+(l.leap?'윤 ':'')+l.m+'. '+l.d+'.';
+  let h='<div class="sd"><b>'+dtn+'</b><span class="lu">'+lun+'</span>'+(hol?'<span class="hol">'+hol+'</span>':'')+'<span class="dday">'+dday+'</span></div>';
   const evs=eventsOnDate(selDate);
   if(evs.length===0){h+='<div class="card"><div class="empty">일정이 없어요<br><span style="font-size:12px">＋ 로 추가해보세요</span></div></div>';}
   else{h+='<div class="card">'+evs.map(o=>evRowHTML(o.e,o.span>1)).join('')+'</div>';}
